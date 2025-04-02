@@ -1,20 +1,21 @@
-project('terminal', 'cpp', default_options: ['default_library=static'])
+project('terminal', 'cpp')
 
 cc = meson.get_compiler('cpp')
+
 fltk_dep = cc.find_library('fltk', static: true, required: true)
+
 inc = include_directories('src')
 subdir('src')
 
 if host_machine.system() == 'windows'
-    link_args = ['-static', '-lws2_32', '-lcomctl32']
+    link_args = ['-static', '-static-libgcc', '-static-libstdc++', '-lws2_32', '-lcomctl32']
 else
-    link_args = ['-static', '-lpthread', '-lm', '-lX11']
+    link_args = ['-lpthread', '-lm', '-lX11', '-lfltk']
 endif
 
 executable('terminal', sources,
     win_subsystem: 'windows',
     dependencies: [fltk_dep],
     include_directories: inc,
-    cpp_args: ['-static', '-static-libgcc', '-static-libstdc++'],
     link_args: link_args
 )
