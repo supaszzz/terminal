@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Meson",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe", 
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "cppStandard": "c++23",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "C:/msys64/ucrt64/include"
+            ]
+        }
+    ],
+    "version": 4
+}
