@@ -1,5 +1,11 @@
 #include "Serial.h"
 
+SerialClass Serial;
+
+void onData(int fd, void* data) {
+    Serial.dataCb(Serial.available());
+}
+
 int SerialClass::connect(std::string port) {
     hSerial = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hSerial == INVALID_HANDLE_VALUE)
@@ -8,8 +14,19 @@ int SerialClass::connect(std::string port) {
     int configErr = config();
     if (configErr)
         return configErr;
+
+    COMMTIMEOUTS timeouts = {0};
+    timeouts.ReadIntervalTimeout = 50;
+    timeouts.ReadTotalTimeoutConstant = 50;
+    timeouts.ReadTotalTimeoutMultiplier = 10;
+    timeouts.WriteTotalTimeoutConstant = 50;
+    timeouts.WriteTotalTimeoutMultiplier = 10;
+    SetCommTimeouts(hSerial, &timeouts);
+    SetupComm(hSerial, 1024, 1024);
+    
     
     connected = true;
+    Fl::add_fd((intptr_t)hSerial, FL_READ, onData, nullptr);
     return 0;
 }
 
@@ -27,6 +44,10 @@ int SerialClass::config() {
 
     serialParams.BaudRate = baudRate;
     serialParams.ByteSize = dataBits;
+    serialParams.fOutxCtsFlow = FALSE;
+    serialParams.fRtsControl = RTS_CONTROL_DISABLE;
+    serialParams.fInX = FALSE;
+    serialParams.fOutX = FALSE;
     
     switch (stopBits) {
         case STOP_1:
@@ -110,5 +131,3 @@ unsigned long SerialClass::scan() {
     }
     return 0;
 }
-
-SerialClass Serial;

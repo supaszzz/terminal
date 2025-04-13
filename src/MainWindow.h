@@ -4,6 +4,7 @@
 #include <FL/Fl_Pack.H>
 #include <FL/fl_ask.H>
 #include "config/ConfigPack.h"
+#include "receive/DataView.h"
 
 class MainWindow: public Fl_Window {
     public:

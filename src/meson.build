@@ -8,5 +8,6 @@ sources = files(
     'config/BaudSelect.cpp',
     'config/DataSelect.cpp',
     'config/StopSelect.cpp',
-    'config/ParitySelect.cpp'
+    'config/ParitySelect.cpp',
+    'receive/DataView.cpp'
 )

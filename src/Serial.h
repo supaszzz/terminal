@@ -3,7 +3,9 @@
 #include <string>
 #include <windows.h>
 #include <cstdint>
+#include <functional>
 #include "errors.h"
+#include <FL/Fl.H>
 
 enum DataBits {
     DATA_5 = 5,
@@ -34,7 +36,7 @@ class SerialClass {
         StopBits stopBits = STOP_1;
         Parity parityBit = NONE;
         bool connected = false;
-
+        std::function<void(unsigned long)> dataCb;
         std::vector<std::string> ports;
 
         int connect(std::string port);
