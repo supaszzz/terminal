@@ -4,9 +4,10 @@
 #include <FL/fl_ask.H>
 #include <string>
 #include "Serial.h"
-#include "errors.h"
 
 class BaudSelect: public Fl_Grid {
+    Fl_Round_Button* selectedBtn = nullptr;
+    static const unsigned int defaultBauds[];
     public:
         BaudSelect();
 };

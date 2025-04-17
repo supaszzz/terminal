@@ -6,8 +6,28 @@ void onData(int fd, void* data) {
     Serial.dataCb(Serial.available());
 }
 
-int SerialClass::connect(std::string port) {
-    hSerial = CreateFileA(port.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+void SerialClass::writeString(const char* str) {
+    char* result = new char[strlen(str) + 1];
+    result[0] = 0;
+    unsigned char hexChar;
+    while (const char* next = strchr(str, '$')) {
+        strncat(result, str, next++ - str);
+        if (*next == '$') {
+            strncat(result, next, 1);
+            str = next + 1;
+        } else {
+            sscanf(next, "%02hhx", &hexChar);
+            strncat(result, (char*)&hexChar, 1);
+            str = next + 2;
+        }
+    }
+    strcat(result, str);
+    write((uint8_t*)result, strlen(result));
+    delete[] result;
+}
+
+int SerialClass::connect(const char* port) {
+    hSerial = CreateFileA(port, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hSerial == INVALID_HANDLE_VALUE)
         return 1;
 
@@ -27,6 +47,7 @@ int SerialClass::connect(std::string port) {
     
     connected = true;
     Fl::add_fd((intptr_t)hSerial, FL_READ, onData, nullptr);
+    portSelect->dropdown->deactivate();
     return 0;
 }
 
@@ -86,23 +107,32 @@ int SerialClass::config() {
 }
 
 void SerialClass::disconnect() {
+    if (!connected)
+        return;
     CloseHandle(hSerial);
     connected = false;
+    portSelect->dropdown->activate();
 }
 
 unsigned long SerialClass::write(uint8_t* data, size_t len) {
+    if (!connected)
+        return 0;
     DWORD bytesWritten;
     WriteFile(hSerial, data, len, &bytesWritten, NULL);
     return bytesWritten;
 }
 
 unsigned long SerialClass::read(uint8_t* buffer, size_t len) {
+    if (!connected)
+        return 0;
     DWORD bytesRead;
     ReadFile(hSerial, buffer, len, &bytesRead, NULL);
     return bytesRead;
 }
 
 unsigned long SerialClass::available() {
+    if (!connected)
+        return 0;
     COMSTAT comStat;
     DWORD errors;
 
@@ -114,6 +144,7 @@ unsigned long SerialClass::available() {
 }
 
 unsigned long SerialClass::scan() {
+    disconnect();
     ports.clear();
     char devices[65536];
 
@@ -129,5 +160,7 @@ unsigned long SerialClass::scan() {
         }
         ptr += device.size() + 1;
     }
+    if (portSelect)
+        portSelect->updatePorts();
     return 0;
 }

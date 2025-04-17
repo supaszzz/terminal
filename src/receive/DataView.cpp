@@ -11,7 +11,7 @@ DataView::DataView() : Fl_Text_Display(0, 0, 0, 500) {
 
         std::vector<uint8_t> data(toRead);
         Serial.read(data.data(), toRead);
-        dataBuffer->append((const char*)data.data());
+        dataBuffer->append((const char*)data.data(), toRead);
 
         int lineCount = dataBuffer->count_lines(0, dataBuffer->length()) + 1;
 

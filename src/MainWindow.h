@@ -5,6 +5,7 @@
 #include <FL/fl_ask.H>
 #include "config/ConfigPack.h"
 #include "receive/DataView.h"
+#include "transmit/SendView.h"
 
 class MainWindow: public Fl_Window {
     public:

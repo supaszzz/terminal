@@ -13,7 +13,7 @@ ButtonPack::ButtonPack()
             w->label("Połącz");
             return;
         }
-        int err = Serial.connect("COM3");
+        int err = Serial.connect(Serial.portSelect->dropdown->text());
         if (err)
             return handleComError(err);
         w->label("Rozłącz");

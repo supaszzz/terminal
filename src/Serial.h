@@ -6,6 +6,11 @@
 #include <functional>
 #include "errors.h"
 #include <FL/Fl.H>
+#include "config/PortSelect.h"
+#include <cstring>
+#include <string>
+
+class PortSelect;
 
 enum DataBits {
     DATA_5 = 5,
@@ -39,10 +44,13 @@ class SerialClass {
         std::function<void(unsigned long)> dataCb;
         std::vector<std::string> ports;
 
-        int connect(std::string port);
+        PortSelect* portSelect = nullptr;
+
+        int connect(const char* port);
         void disconnect();
         int config();
         void reconfig();
+        void writeString(const char* str);
         unsigned long scan();
         unsigned long write(uint8_t* data, size_t len);
         unsigned long read(uint8_t* buffer, size_t len);

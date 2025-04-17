@@ -1,11 +1,9 @@
 #include "StopSelect.h"
 
-StopSelect::StopSelect() : Fl_Pack(0, 0, 200, 0)
+StopSelect::StopSelect() : ParamSelect("Bity stopu", &Serial.stopBits, 3)
 {
-    box(FL_BORDER_BOX);
-    label("Bity stopu");
-
-    
-
+    this->entry("1", STOP_1, true);
+    this->entry("1.5", STOP_1_5);
+    this->entry("2", STOP_2);
     end();
 }

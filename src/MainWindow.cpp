@@ -11,8 +11,10 @@ MainWindow::MainWindow()
 : Fl_Window(1280, 720, "Terminal")
 {
     resizable(this);
-    auto rootPack = new Fl_Pack(10, 20, 1270, 700);
+    auto rootPack = new Fl_Pack(10, 20, 1260, 680);
+    rootPack->spacing(20);
     new ConfigPack();
+    new SendView();
     new DataView();
     rootPack->end();
     end();

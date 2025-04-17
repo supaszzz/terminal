@@ -5,6 +5,7 @@
 #include "DataSelect.h"
 #include "StopSelect.h"
 #include "ParitySelect.h"
+#include "PortSelect.h"
 
 class ConfigPack: public Fl_Pack {
     public:
