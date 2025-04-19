@@ -37,9 +37,16 @@ class SerialClass {
     HANDLE hSerial;
     public:
         unsigned int baudRate = 9600;
+        unsigned int customBR = 9600;
+
         DataBits dataBits = DATA_8;
         StopBits stopBits = STOP_1;
         Parity parityBit = NONE;
+
+        bool sendCR = false;
+        bool sendLF = false;
+        bool sendLFCR = false;
+
         bool connected = false;
         std::function<void(unsigned long)> dataCb;
         std::vector<std::string> ports;

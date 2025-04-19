@@ -10,12 +10,14 @@ void radio_cb(Fl_Widget* w) {
 MainWindow::MainWindow()
 : Fl_Window(1280, 720, "Terminal")
 {
-    resizable(this);
     auto rootPack = new Fl_Pack(10, 20, 1260, 680);
-    rootPack->spacing(20);
+    rootPack->spacing(10);
     new ConfigPack();
     new SendView();
     new DataView();
     rootPack->end();
     end();
+
+    resizable(rootPack);
+    size_range(1280, 720);
 }

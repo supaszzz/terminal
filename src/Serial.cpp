@@ -7,7 +7,7 @@ void onData(int fd, void* data) {
 }
 
 void SerialClass::writeString(const char* str) {
-    char* result = new char[strlen(str) + 1];
+    char* result = new char[strlen(str) + 3];
     result[0] = 0;
     unsigned char hexChar;
     while (const char* next = strchr(str, '$')) {
@@ -22,6 +22,12 @@ void SerialClass::writeString(const char* str) {
         }
     }
     strcat(result, str);
+    if (!sendLFCR && sendCR)
+        strcat(result, "\r");
+    if (sendLF)
+        strcat(result, "\n");
+    if (sendLFCR && sendCR)
+        strcat(result, "\r");
     write((uint8_t*)result, strlen(result));
     delete[] result;
 }

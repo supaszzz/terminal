@@ -29,6 +29,10 @@ BaudSelect::BaudSelect() : Fl_Grid(0, 0, 230, 0)
 
     auto btnCustom = new Fl_Round_Button(0, 0, 0, 0, "ręcznie");
     btnCustom->type(FL_RADIO_BUTTON);
+    btnCustom->callback([](Fl_Widget*) {
+        Serial.baudRate = Serial.customBR;
+        Serial.reconfig();
+    });
     widget(btnCustom, 4, 2);
 
     show_grid(0);
