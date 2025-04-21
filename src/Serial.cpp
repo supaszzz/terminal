@@ -41,16 +41,6 @@ int SerialClass::connect(const char* port) {
     if (configErr)
         return configErr;
 
-    COMMTIMEOUTS timeouts = {0};
-    timeouts.ReadIntervalTimeout = 50;
-    timeouts.ReadTotalTimeoutConstant = 50;
-    timeouts.ReadTotalTimeoutMultiplier = 10;
-    timeouts.WriteTotalTimeoutConstant = 50;
-    timeouts.WriteTotalTimeoutMultiplier = 10;
-    SetCommTimeouts(hSerial, &timeouts);
-    SetupComm(hSerial, 1024, 1024);
-    
-    
     connected = true;
     Fl::add_fd((intptr_t)hSerial, FL_READ, onData, nullptr);
     portSelect->dropdown->deactivate();
@@ -133,6 +123,10 @@ unsigned long SerialClass::read(uint8_t* buffer, size_t len) {
         return 0;
     DWORD bytesRead;
     ReadFile(hSerial, buffer, len, &bytesRead, NULL);
+    if (recvBytesLabel)
+        recvBytesLabel->update(bytesRead);
+    if (logFile)
+        logFile->write((char*)buffer, bytesRead);
     return bytesRead;
 }
 
@@ -169,4 +163,22 @@ unsigned long SerialClass::scan() {
     if (portSelect)
         portSelect->updatePorts();
     return 0;
+}
+
+bool SerialClass::startLog(const char* path) {
+    if (logFile)
+        stopLog();
+    logFile = new std::ofstream(path, std::ios::app | std::ios::binary);
+    if (!(*logFile)) {
+        logFile = nullptr;
+        return false;
+    }
+    return true;
+}
+
+void SerialClass::stopLog() {
+    if (logFile) {
+        logFile->close();
+        logFile = nullptr;
+    }
 }

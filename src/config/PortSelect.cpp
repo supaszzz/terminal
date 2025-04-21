@@ -15,9 +15,9 @@ PortSelect::PortSelect() : Fl_Pack(0, 0, 160, 0, "Port")
         auto input = (Fl_Input*)w;
         auto value = atoi(input->value());
         if (value)
-            Serial.baudRate = value;
+            Serial.customBR = value;
         char baudStr[24] = {0};
-        snprintf(baudStr, 24, "%d", Serial.baudRate);
+        snprintf(baudStr, 24, "%d", Serial.customBR);
         input->value(baudStr);
     });
     end();

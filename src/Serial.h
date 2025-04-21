@@ -9,6 +9,8 @@
 #include "config/PortSelect.h"
 #include <cstring>
 #include <string>
+#include "receive/RecvBytesLabel.h"
+#include <fstream>
 
 class PortSelect;
 
@@ -52,6 +54,7 @@ class SerialClass {
         std::vector<std::string> ports;
 
         PortSelect* portSelect = nullptr;
+        RecvBytesLabel* recvBytesLabel = nullptr;
 
         int connect(const char* port);
         void disconnect();
@@ -62,6 +65,10 @@ class SerialClass {
         unsigned long write(uint8_t* data, size_t len);
         unsigned long read(uint8_t* buffer, size_t len);
         unsigned long available();
+
+        std::ofstream* logFile = nullptr;
+        bool startLog(const char* path);
+        void stopLog();
 };
 
 extern SerialClass Serial;

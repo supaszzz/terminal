@@ -4,6 +4,7 @@
 #include "Serial.h"
 
 int main(int argc, char ** argv) {
+    fl_font(FL_HELVETICA, 14);
     Serial.scan();
     mainWindow = new MainWindow();
     mainWindow->show(argc, argv);

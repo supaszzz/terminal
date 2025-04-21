@@ -11,5 +11,7 @@ sources = files(
     'config/PortSelect.cpp',
     'config/ParitySelect.cpp',
     'receive/DataView.cpp',
+    'receive/StatusPack.cpp',
+    'receive/RecvBytesLabel.cpp',
     'transmit/SendView.cpp'
 )

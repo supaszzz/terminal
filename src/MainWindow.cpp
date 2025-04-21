@@ -14,7 +14,8 @@ MainWindow::MainWindow()
     rootPack->spacing(10);
     new ConfigPack();
     new SendView();
-    new DataView();
+    auto dataView = new DataView();
+    new StatusPack(dataView);
     rootPack->end();
     end();
 
