@@ -24,7 +24,7 @@ StatusPack::StatusPack(DataView* dv) : Fl_Pack(0, 0, 0, 25) {
         Fl_Native_File_Chooser fc;
         fc.title("Zapisz log jako");
         fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-        fc.filter(".log");
+        fc.filter("*.log");
 
         time_t now = time(NULL);
         char name[512];

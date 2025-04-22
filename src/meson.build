@@ -13,5 +13,7 @@ sources = files(
     'receive/DataView.cpp',
     'receive/StatusPack.cpp',
     'receive/RecvBytesLabel.cpp',
-    'transmit/SendView.cpp'
+    'transmit/SendView.cpp',
+    'transmit/Macros.cpp',
+    'transmit/MacroEdit.cpp'
 )

@@ -6,7 +6,7 @@ void onData(int fd, void* data) {
     Serial.dataCb(Serial.available());
 }
 
-void SerialClass::writeString(const char* str) {
+void SerialClass::writeString(const char* str) { //narpawić
     char* result = new char[strlen(str) + 3];
     result[0] = 0;
     unsigned char hexChar;

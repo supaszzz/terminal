@@ -7,6 +7,7 @@
 #include "receive/DataView.h"
 #include "receive/StatusPack.h"
 #include "transmit/SendView.h"
+#include "transmit/Macros.h"
 
 class MainWindow: public Fl_Window {
     public:

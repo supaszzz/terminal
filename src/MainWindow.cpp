@@ -13,6 +13,8 @@ MainWindow::MainWindow()
     auto rootPack = new Fl_Pack(10, 20, 1260, 680);
     rootPack->spacing(10);
     new ConfigPack();
+    new Fl_Box(0, 0, 0, 20, "Makra");
+    new Macros();
     new SendView();
     auto dataView = new DataView();
     new StatusPack(dataView);
@@ -20,5 +22,5 @@ MainWindow::MainWindow()
     end();
 
     resizable(rootPack);
-    size_range(1280, 720);
+    size_range(1366, 960);
 }

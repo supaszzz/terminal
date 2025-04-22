@@ -66,6 +66,8 @@ void DataView::setHex(bool enabled) {
     } else {
         dataCopy.push_back(0);
         dataBuffer->text(dataCopy.data());
+        insert_position(dataBuffer->length());
+        show_insert_position();
     }
 
 }
