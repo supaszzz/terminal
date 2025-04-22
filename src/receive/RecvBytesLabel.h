@@ -10,4 +10,5 @@ class RecvBytesLabel: public Fl_Box {
         RecvBytesLabel();
         void update(unsigned long recvBytes);
         double formatSize(char* sizeUnit);
+        void clear();
 };

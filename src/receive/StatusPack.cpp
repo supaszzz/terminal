@@ -9,7 +9,8 @@ StatusPack::StatusPack(DataView* dv) : Fl_Pack(0, 0, 0, 25) {
     auto clearButton = new Fl_Button(0, 0, 80, 0, "Wyczyść"); //naprawić
     clearButton->callback([](Fl_Widget*, void* data) {
         auto dv = (DataView*)data;
-        dv->buffer()->text("");
+        dv->clear();
+        Serial.recvBytesLabel->clear();
     }, (void*)dv);
 
     auto logButton = new Fl_Button(0, 0, 80, 0);

@@ -84,3 +84,9 @@ void DataView::appendHex(uint8_t* str, unsigned long len) {
         dataCopy.push_back((char)val);
     }
 }
+
+void DataView::clear() {
+    dataBuffer->text("");
+    dataCopy.clear();
+    byteCounter = 0;
+}

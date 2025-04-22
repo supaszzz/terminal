@@ -16,4 +16,5 @@ class DataView : public Fl_Text_Display {
         DataView();
         void findNext(const char* str, bool matchCase, bool backward = false);
         void setHex(bool enabled);
+        void clear();
 };

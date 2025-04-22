@@ -25,3 +25,8 @@ double RecvBytesLabel::formatSize(char* sizeUnit) {
     strcpy(sizeUnit, units[unitVal]);
     return result;
 }
+
+void RecvBytesLabel::clear() {
+    totalBytes = 0;
+    update(0);
+}
