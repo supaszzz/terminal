@@ -1,12 +1,13 @@
 #include "MacroEdit.h"
 
-MacroEdit::MacroEdit(Macro* m, Fl_Widget* mBtn) : Fl_Window(512, 145, "Edycja makra") {
+MacroEdit::MacroEdit(Macro* m, Fl_Widget* mBtn, Macro* e) : Fl_Window(512, 145, "Edycja makra") {
     set_modal();
     callback([](Fl_Widget* w) {
         Fl::delete_widget(w);
     });
     macro = m;
     macroBtn = mBtn;
+    entries = e;
 
     auto pack = new Fl_Pack(0, 0, 512, 145);
     auto grid = new Fl_Grid(0, 0, 0, 100);
@@ -69,6 +70,13 @@ MacroEdit::MacroEdit(Macro* m, Fl_Widget* mBtn) : Fl_Window(512, 145, "Edycja ma
 
         strncpy(win->macro->data, strData, sizeof(win->macro->data));
         strncpy(win->macro->name, strName, sizeof(win->macro->name));
+
+        std::ofstream savedEntries(getMacroPath(), std::ios::binary | std::ios::out);
+        if (savedEntries.is_open()) {
+            savedEntries.write((char*)win->entries, 60 * sizeof(Macro));
+            savedEntries.close();
+        }
+
         win->macroBtn->redraw();
         win->hide();
         Fl::delete_widget(win);

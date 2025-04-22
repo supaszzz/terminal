@@ -65,8 +65,15 @@ Macros::Macros() : Fl_Grid(0, 0, 0, 200) {
     for (int i = 0; i != 3; i++)
         row_weight(i, 2);
 
-    for (int i = 0; i != 60; i++)
-        snprintf(entries[i].name, 13, "Makro %d", (i % 20) + 1);
+
+    std::ifstream savedEntries(getMacroPath(), std::ios::binary | std::ios::in);
+    if (savedEntries.is_open()) {
+        savedEntries.read((char*)entries, 60 * sizeof(Macro));
+        savedEntries.close();
+    } else {
+        for (int i = 0; i != 60; i++)
+            snprintf(entries[i].name, 13, "Makro %d", (i % 20) + 1);
+    }
 
     auto bottomPack = new Fl_Pack(0, 0, 0, 0);
     bottomPack->spacing(10);
@@ -98,13 +105,13 @@ Macros::Macros() : Fl_Grid(0, 0, 0, 200) {
             auto macro = &entries[index];
             auto btn = new Fl_Button(0, 0, 0, 0, macro->name);
             btn->callback([](Fl_Widget* w, void* data) {
-                auto [macro, editMode] = *(std::pair<Macro*, Fl_Check_Button*>*)data;
+                auto [macro, editMode, entries] = *(std::tuple<Macro*, Fl_Check_Button*, Macro*>*)data;
                 if (editMode->value()) {
-                    new MacroEdit(macro, w);
+                    new MacroEdit(macro, w, entries);
                     return;
                 }
                 Serial.writeString(macro->data);
-            }, new std::pair<Macro*, Fl_Check_Button*>(macro, editMode));
+            }, new std::tuple<Macro*, Fl_Check_Button*, Macro*>(macro, editMode, entries));
             grid->widget(btn, j / 10, j % 10);
             macroButtons[index] = btn;
         }

@@ -64,8 +64,8 @@ void DataView::setHex(bool enabled) {
         appendHex((uint8_t*)textCopy, len);
         free(textCopy);
     } else {
-        dataCopy.push_back(0);
-        dataBuffer->text(dataCopy.data());
+        dataBuffer->text("");
+        dataBuffer->append(dataCopy.data(), dataCopy.size());
         insert_position(dataBuffer->length());
         show_insert_position();
     }

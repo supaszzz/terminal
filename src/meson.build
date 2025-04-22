@@ -3,6 +3,7 @@ sources = files(
     'MainWindow.cpp',
     'Serial.cpp',
     'errors.cpp',
+    'paths.cpp',
     'config/ConfigPack.cpp',
     'config/ButtonPack.cpp',
     'config/BaudSelect.cpp',

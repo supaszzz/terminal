@@ -6,29 +6,39 @@ void onData(int fd, void* data) {
     Serial.dataCb(Serial.available());
 }
 
-void SerialClass::writeString(const char* str) { //narpawić
+void lenncat(char* dest, size_t& destLen, const char* src, size_t srcLen) {
+    strncpy(dest + destLen, src, srcLen);
+    destLen += srcLen;
+}
+
+void lencat(char* dest, size_t& destLen, const char* src) {
+    strcpy(dest + destLen, src);
+    destLen += strlen(src);
+}
+
+void SerialClass::writeString(const char* str) {
     char* result = new char[strlen(str) + 3];
-    result[0] = 0;
+    size_t length = 0;
     unsigned char hexChar;
     while (const char* next = strchr(str, '$')) {
-        strncat(result, str, next++ - str);
+        lenncat(result, length, str, next++ - str);
         if (*next == '$') {
-            strncat(result, next, 1);
+            lenncat(result, length, next, 1);
             str = next + 1;
         } else {
             sscanf(next, "%02hhx", &hexChar);
-            strncat(result, (char*)&hexChar, 1);
+            lenncat(result, length, (char*)&hexChar, 1);
             str = next + 2;
         }
     }
-    strcat(result, str);
+    lencat(result, length, str);
     if (!sendLFCR && sendCR)
-        strcat(result, "\r");
+        lencat(result, length, "\r");
     if (sendLF)
-        strcat(result, "\n");
+        lencat(result, length, "\n");
     if (sendLFCR && sendCR)
-        strcat(result, "\r");
-    write((uint8_t*)result, strlen(result));
+        lencat(result, length, "\r");
+    write((uint8_t*)result, length);
     delete[] result;
 }
 
@@ -105,6 +115,7 @@ int SerialClass::config() {
 void SerialClass::disconnect() {
     if (!connected)
         return;
+    Fl::remove_fd((intptr_t)hSerial);
     CloseHandle(hSerial);
     connected = false;
     portSelect->dropdown->activate();

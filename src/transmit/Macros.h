@@ -7,8 +7,9 @@
 #include "Serial.h"
 #include "MacroEdit.h"
 #include <cstdint>
-#include <utility>
+#include <tuple>
 #include <fstream>
+#include "paths.h"
 
 struct Macro {
     char data[2035]{};

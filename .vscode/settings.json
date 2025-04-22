@@ -54,6 +54,10 @@
         "text_encoding": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "codecvt": "cpp",
+        "ratio": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp"
     }
 }
