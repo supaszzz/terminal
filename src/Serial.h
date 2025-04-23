@@ -22,6 +22,8 @@
 #include "receive/RecvBytesLabel.h"
 #include <fstream>
 
+#include <FL/fl_ask.H>
+
 class PortSelect;
 
 enum DataBits {

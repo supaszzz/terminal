@@ -1,6 +1,6 @@
 #include "RecvBytesLabel.h"
 
-RecvBytesLabel::RecvBytesLabel() : Fl_Box(0, 0, 20, 0) {
+RecvBytesLabel::RecvBytesLabel() : Fl_Box(0, 0, 30, 0) {
     update(0);
 }
 

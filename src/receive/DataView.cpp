@@ -66,10 +66,10 @@ void DataView::setHex(bool enabled) {
     } else {
         dataBuffer->text("");
         dataBuffer->append(dataCopy.data(), dataCopy.size());
-        insert_position(dataBuffer->length());
-        show_insert_position();
     }
 
+    insert_position(dataBuffer->length());
+    show_insert_position();
 }
 
 void DataView::appendHex(uint8_t* str, unsigned long len) {

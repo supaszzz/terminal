@@ -25,11 +25,11 @@ void SerialClass::writeString(const char* str) {
         if (*next == '$') {
             lenncat(result, length, next, 1);
             str = next + 1;
-        } else {
-            sscanf(next, "%02hhx", &hexChar);
-            lenncat(result, length, (char*)&hexChar, 1);
+        } else if (*next && *(next + 1)) {
+            if (sscanf(next, "%02hhx", &hexChar) == 1)
+                lenncat(result, length, (char*)&hexChar, 1);
             str = next + 2;
-        }
+        } else break;
     }
     lencat(result, length, str);
     if (!sendLFCR && sendCR)
@@ -218,8 +218,10 @@ unsigned long SerialClass::read(uint8_t* buffer, size_t len) {
 #endif
     if (recvBytesLabel)
         recvBytesLabel->update(bytesRead);
-    if (logFile)
+    if (logFile) {
         logFile->write((char*)buffer, bytesRead);
+        logFile->flush();
+    }
     return bytesRead;
 }
 

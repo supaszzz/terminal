@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <cstring>
 
+#include <FL/fl_ask.H>
+
 class DataView : public Fl_Text_Display {
     Fl_Text_Buffer* dataBuffer = nullptr;
     bool hexEnabled = false;
