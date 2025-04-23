@@ -8,16 +8,12 @@ ButtonPack::ButtonPack()
 
     btnConnect = new Fl_Button(0, 0, 100, 20, "Połącz");
     btnConnect->callback([](Fl_Widget* w) {
-        if (Serial.connected) {
+        if (Serial.connected)
             Serial.disconnect();
-            w->label("Połącz");
-            return;
-        }
-        int err = Serial.connect(Serial.portSelect->dropdown->text());
-        if (err)
-            return handleComError(err);
-        w->label("Rozłącz");
+        else
+            handleComError(Serial.connect(Serial.portSelect->dropdown->text()));
     });
+    Serial.connectButton = btnConnect;
 
     auto btnScan = new Fl_Button(0, 0, 100, 20, "Skanuj");
     btnScan->callback([](Fl_Widget* w) {

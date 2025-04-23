@@ -22,6 +22,14 @@ void exportMacros(Fl_Widget*, void* data) {
     }
 }
 
+void saveMacros(Macro* entries) {
+    std::ofstream savedEntries(getMacroPath(), std::ios::binary | std::ios::out);
+    if (savedEntries.is_open()) {
+        savedEntries.write((char*)entries, 60 * sizeof(Macro));
+        savedEntries.close();
+    }
+}
+
 void importMacros(Fl_Widget*, void* data) {
     Fl_Native_File_Chooser fc;
     fc.title("Importuj z");
@@ -55,6 +63,8 @@ void importMacros(Fl_Widget*, void* data) {
 
         for (Fl_Button* i : macroButtons)
             i->redraw();
+
+        saveMacros((Macro*) data);
     }
 }
 

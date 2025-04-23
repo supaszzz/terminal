@@ -21,3 +21,5 @@ class Macros: public Fl_Grid {
     public:
         Macros();
 };
+
+void saveMacros(Macro* entries);

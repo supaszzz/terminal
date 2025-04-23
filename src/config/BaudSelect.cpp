@@ -19,6 +19,7 @@ BaudSelect::BaudSelect() : Fl_Grid(0, 0, 230, 0)
         btn->callback([](Fl_Widget* btn, void* data) {
             Serial.baudRate = *((unsigned int*)data);
             Serial.reconfig();
+            Serial.useCustomBR = false;
         }, (void*)&defaultBauds[i]);
 
         if (defaultBauds[i] == 9600)
@@ -32,6 +33,7 @@ BaudSelect::BaudSelect() : Fl_Grid(0, 0, 230, 0)
     btnCustom->callback([](Fl_Widget*) {
         Serial.baudRate = Serial.customBR;
         Serial.reconfig();
+        Serial.useCustomBR = true;
     });
     widget(btnCustom, 4, 2);
 

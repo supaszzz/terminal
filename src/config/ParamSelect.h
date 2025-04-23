@@ -27,7 +27,7 @@ class ParamSelect: public Fl_Grid {
             row++;
         }
     public:
-        ParamSelect(const char* label, T* property, int rows) : Fl_Grid(0, 0, 100, 0, label) {
+        ParamSelect(const char* label, T* property, int rows) : Fl_Grid(0, 0, 105, 0, label) {
             box(FL_ENGRAVED_BOX);
             layout(rows, 1);
             this->property = property;

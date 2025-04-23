@@ -28,7 +28,7 @@ StatusPack::StatusPack(DataView* dv) : Fl_Pack(0, 0, 0, 25) {
 
         time_t now = time(NULL);
         char name[512];
-        snprintf(name, 512, "log_%lld.log", now);
+        snprintf(name, 512, "log_%lld.log", (long long int)now);
         fc.preset_file(name);
 
         if (fc.show() == 0) {

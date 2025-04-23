@@ -43,10 +43,15 @@ void SerialClass::writeString(const char* str) {
 }
 
 int SerialClass::connect(const char* port) {
+#ifdef _WIN32
     hSerial = CreateFileA(port, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hSerial == INVALID_HANDLE_VALUE)
         return 1;
-
+#else
+    hSerial = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    if (hSerial < 0)
+        return 1;
+#endif
     int configErr = config();
     if (configErr)
         return configErr;
@@ -54,15 +59,23 @@ int SerialClass::connect(const char* port) {
     connected = true;
     Fl::add_fd((intptr_t)hSerial, FL_READ, onData, nullptr);
     portSelect->dropdown->deactivate();
+    if (connectButton)
+        connectButton->label("Rozłącz");
     return 0;
 }
 
 void SerialClass::reconfig() {
-    if (connected)
-        handleComError(config());
+    if (connected) {
+        int err = config();
+        if (err) {
+            disconnect();
+            handleComError(err);
+        }
+    }
 }
 
 int SerialClass::config() {
+#ifdef _WIN32
     DCB serialParams = {0};
     if (!GetCommState(hSerial, &serialParams)) {
         CloseHandle(hSerial);
@@ -108,7 +121,62 @@ int SerialClass::config() {
         CloseHandle(hSerial);
         return 3;
     }
+#else
+    struct termios2 serialParams;
+    if (ioctl(hSerial, TCGETS2, &serialParams) < 0) {
+        close(hSerial);
+        return 2;
+    }
 
+    serialParams.c_ispeed = baudRate;
+    serialParams.c_ospeed = baudRate;
+    serialParams.c_oflag = 0;
+    serialParams.c_iflag = 0;
+    serialParams.c_lflag = 0;
+    serialParams.c_cflag = CREAD | CLOCAL | CBAUDEX;
+
+    switch (parityBit) {
+        case ODD:
+            serialParams.c_cflag |= PARODD;
+        case EVEN:
+            serialParams.c_cflag |= PARENB;
+            break;
+        case MARK:
+        case SPACE:
+            close(hSerial);
+            return 4;
+    }
+
+    switch (stopBits) {
+        case STOP_1_5:
+            close(hSerial);
+            return 5;
+        case STOP_2:
+            serialParams.c_cflag |= CSTOPB;
+    }
+
+    switch (dataBits) {
+        case DATA_5:
+            serialParams.c_cflag |= CS5;
+            break;
+        case DATA_6:
+            serialParams.c_cflag |= CS6;
+            break;
+        case DATA_7:
+            serialParams.c_cflag |= CS7;
+            break;
+        case DATA_8:
+            serialParams.c_cflag |= CS8;
+    }
+
+    serialParams.c_cc[VMIN] = 1;
+    serialParams.c_cc[VTIME] = 0;
+
+    if (ioctl(hSerial, TCSETS2, &serialParams) < 0) {
+        close(hSerial);
+        return 3;
+    }
+#endif
     return 0;
 }
 
@@ -116,24 +184,38 @@ void SerialClass::disconnect() {
     if (!connected)
         return;
     Fl::remove_fd((intptr_t)hSerial);
+#ifdef _WIN32
     CloseHandle(hSerial);
+#else
+    close(hSerial);
+#endif
     connected = false;
     portSelect->dropdown->activate();
+    if (connectButton)
+        connectButton->label("Połącz");
 }
 
 unsigned long SerialClass::write(uint8_t* data, size_t len) {
     if (!connected)
         return 0;
+#ifdef _WIN32
     DWORD bytesWritten;
     WriteFile(hSerial, data, len, &bytesWritten, NULL);
     return bytesWritten;
+#else
+    return ::write(hSerial, data, len);
+#endif
 }
 
 unsigned long SerialClass::read(uint8_t* buffer, size_t len) {
     if (!connected)
         return 0;
+#ifdef _WIN32
     DWORD bytesRead;
     ReadFile(hSerial, buffer, len, &bytesRead, NULL);
+#else
+    ssize_t bytesRead = ::read(hSerial, buffer, len);
+#endif
     if (recvBytesLabel)
         recvBytesLabel->update(bytesRead);
     if (logFile)
@@ -144,6 +226,7 @@ unsigned long SerialClass::read(uint8_t* buffer, size_t len) {
 unsigned long SerialClass::available() {
     if (!connected)
         return 0;
+#ifdef _WIN32
     COMSTAT comStat;
     DWORD errors;
 
@@ -152,13 +235,19 @@ unsigned long SerialClass::available() {
     }
 
     return 0;
+#else
+    int bytes;
+    if (ioctl(hSerial, FIONREAD, &bytes) == -1)
+        return 0;
+    return bytes;
+#endif
 }
 
 unsigned long SerialClass::scan() {
     disconnect();
     ports.clear();
+#ifdef _WIN32
     char devices[65536];
-
     if (!QueryDosDeviceA(NULL, devices, sizeof(devices))) {
         return GetLastError();
     }
@@ -171,6 +260,19 @@ unsigned long SerialClass::scan() {
         }
         ptr += device.size() + 1;
     }
+#else
+    static const std::string prefixes[] = {
+        "/dev/ttyS", "/dev/ttyUSB", "/dev/ttyACM"
+    };
+
+    for (auto& prefix : prefixes) {
+        for (int i = 0; i != 32; i++) {
+            std::string device = prefix + std::to_string(i);
+            if (access(device.c_str(), F_OK) != -1)
+                ports.push_back(device);
+        }
+    }
+#endif
     if (portSelect)
         portSelect->updatePorts();
     return 0;

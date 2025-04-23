@@ -71,11 +71,7 @@ MacroEdit::MacroEdit(Macro* m, Fl_Widget* mBtn, Macro* e) : Fl_Window(512, 145, 
         strncpy(win->macro->data, strData, sizeof(win->macro->data));
         strncpy(win->macro->name, strName, sizeof(win->macro->name));
 
-        std::ofstream savedEntries(getMacroPath(), std::ios::binary | std::ios::out);
-        if (savedEntries.is_open()) {
-            savedEntries.write((char*)win->entries, 60 * sizeof(Macro));
-            savedEntries.close();
-        }
+        saveMacros(win->entries);
 
         win->macroBtn->redraw();
         win->hide();

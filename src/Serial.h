@@ -1,11 +1,21 @@
 #pragma once
 #include <vector>
 #include <string>
+#ifdef _WIN32
 #include <windows.h>
+#define FD_TYPE HANDLE
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <asm-generic/termbits.h>
+#define FD_TYPE int
+#endif
 #include <cstdint>
 #include <functional>
 #include "errors.h"
 #include <FL/Fl.H>
+#include <FL/Fl_Button.H>
 #include "config/PortSelect.h"
 #include <cstring>
 #include <string>
@@ -36,10 +46,11 @@ enum Parity {
 };
 
 class SerialClass {
-    HANDLE hSerial;
+    FD_TYPE hSerial;
     public:
         unsigned int baudRate = 9600;
         unsigned int customBR = 9600;
+        bool useCustomBR = false;
 
         DataBits dataBits = DATA_8;
         StopBits stopBits = STOP_1;
@@ -55,6 +66,7 @@ class SerialClass {
 
         PortSelect* portSelect = nullptr;
         RecvBytesLabel* recvBytesLabel = nullptr;
+        Fl_Button* connectButton = nullptr;
 
         int connect(const char* port);
         void disconnect();
